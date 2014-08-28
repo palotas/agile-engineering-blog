@@ -1,0 +1,149 @@
+= Mobile WebDriver Selendroid
+Dominik Dary <ddary@ebay.com>
+v0.1, October 16, 2013: First Version
+v0.2, March 10, 2014: Incorporated updates to the lastest version
+
+This document is an introduction to http://selendroid.io[selendroid], which is an implementation of the http://seleniumhq.wordpress.com/2013/08/28/mobile-webdriver/[Mobile WebDriver] protocol.
+
+== Overview
+
+* Features
+* In Action
+* Architechture
+* Demo Project
+* State of the project
+
+== Features
+Main features of selendroid are:
+
+* The app under test must not be modified in order to automate it
+* Between the native and the web context can be switched back and forth, which basically means the concept of automating native or hybrid apps are the same.
+* Different locator types are supported to find elements
+* Gestures are supported: http://selendroid.io/gestures.html[Advanced User Interactions API]
+* Selendroid can interact with multiple Android devices (emulators or hardware devices) at the same time
+* Existing Emulators are started automatically
+* Selendroid supports hot plugging for hardware devices
+* It can be http://selendroid.io/scale.html[integrated] as a node into the Selenium Grid for scaling and parallel testing
+* Android target API support from 2.3.3 to 4.3 (latest)
+* Build in Inspector to simplify test case development.
+
+== In Action
+
+I order to keep that example as simple as possible I have created a small demo project in which I use the [selendroid-test-app](https://github.com/selendroid/selendroid/tree/master/selendroid-test-app), the app that we use to verify that selendroid itself works fine.
+
+The project https://github.com/selendroid/demoproject-selendroid[demoproject-selendroid] is using maven, TestNG and java to write the tests.
+
+To import selendroid and TestNG I have used the following dependencies declaration:
+
+[source,xml]
+<dependencies>
+	<dependency>
+		<groupId>io.selendroid</groupId>
+		<version>0.9.0</version>
+		<artifactId>selendroid-standalone</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>io.selendroid</groupId>
+		<version>0.9.0</version>
+		<artifactId>selendroid-client</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>org.testng</groupId>
+		<artifactId>testng</artifactId>
+		<version>6.8</version>
+	</dependency>
+</dependencies>
+
+
+The app under test is located in the folder https://github.com/selendroid/demoproject-selendroid/tree/master/src/main/resources[src/main/resources/].
+
+=== Starting the server
+
+Before the client driver can be instaciated, selendroid-standalone server must be started. 
+
+This can be done via command line by running the following command (http://selendroid.io/setup.html[jar downlaod]): 
+
+[source,shell]
+java -jar selendroid-standalone-0.5.1-with-dependencies.jar -app selendroid-test-app-0.5.1.apk
+
+
+Another option is to start the standalone server directly from your test code:
+
+[source,java]
+SelendroidConfiguration config = new SelendroidConfiguration();
+config.addSupportedApp("src/main/resources/selendroid-test-app-0.9.0.apk");
+selendroidServer = new SelendroidLauncher(config);
+selendroidServer.lauchSelendroid();
+
+=== The test
+
+First you need to instanciate the client driver:
+
+[source,java]
+SelendroidCapabilities caps = new SelendroidCapabilities("io.selendroid.testapp:0.9.0");
+driver = new SelendroidDriver("http://localhost:5555/wd/hub", caps);
+
+
+Then the driver can be used to interact with the test app:
+
+[source,java]
+WebElement inputField = driver.findElement(By.id("my_text_field"));
+inputField.sendKeys("Selendroid");
+Assert.assertEquals("Selendroid", inputField.getText());
+
+
+Maybe offer an sample about how to write a test in python.
+[source,python]
+----
+import unittest
+from selenium import webdriver
+
+class SelendroidTest(unittest.TestCase):
+
+    def setUp(self):
+        desired_capabilities={'aut': 'io.selendroid.testapp:0.9.0'}
+        self.webdriver.Remote( desired_capabilities)
+
+    def test_native_app(self):
+        self.driver.get('and-activity://io.selendroid.testapp.HomeScreenActivity')
+        text_field = self.driver.find_element_by_idh('my_text_field')
+        text_field.sendKeys('Selendroid automates Android apps.')
+        self.assertTrue('Selendroid automates Android apps.' in text_field.text)
+
+    def tearDown(self):
+        self.driver.quit()
+
+if __name__ == '__main__':
+    unittest.main()
+----
+
+== 
+
+
+As I have already written, Selendroid is an implementation of the WebDriver protocol. The main component of selendroid is Selendroid-standalone.
+
+image:images/selendroid_archicture.png["Selendroid's Architecture"]
+
+While the server is started, the already existent emulators (Android virtual devices) and connected hardware devices will be identified and added to the internal device store. The apps that have been configured for test are resigned.
+
+The status of the server, that includes the apps under tests and the supported devices with the corresponding capabilities, can be verified at http://localhost:5555:/wd/hub/status[http://localhost:5555:/wd/hub/status].
+
+== Demo Project
+
+The demo project with more complex scenarios is located here: https://github.com/selendroid/demoproject-selendroid
+
+* A step by step video about native testing you find here:
+
+	** https://vimeo.com/76954311
+	** Password: selendroid
+	
+* A step by step video about hybrid testing you find here:
+
+	** https://vimeo.com/77019579
+	** Password: selendroid
+
+The plan is to have the same video for the hybrid app.
+
+== State of the project
+
+The project has been created by https://github.com/DominikDary[Dominik Dary] who works in the Productivity and Test Engineering Team at ebay Europe and the project got already contributions from https://github.com/selendroid/selendroid/blob/master/AUTHORS[different people] and companies like salesforce, Red Hat and Facebook.
