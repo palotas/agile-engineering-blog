@@ -1,14 +1,46 @@
-Mobile Test Automation with selendroid
-======================================
-:author: Dominik Dary and Michael Palotas
+Agile Engineering Practices
+===========================
+:author: Michael Palotas
 :toc:
 :icons:
 :lang: en
 :encoding: UTF-8
 
-This document is an introduction to mobile test automation based on Selendroid.
+== Agile Software Development
+=== What is it?
+=== How does it impact the development itself?
+==== Fast feedback
+==== Frequent feedback
 
-== Borderless transactions and the impact on test automation
+
+
+=== TDD
+=== Test automation
+=== Test infrastructure
+=== manual testing
+=== Test cases
+=== Unit testing
+=== BDD
+=== Code reviews and static code analysis (SONAR)
+=== CI Pipeline
+=== Session based testing
+=== Pair programming
+=== Continuous integration
+=== Continuous delivery
+=== Small releases
+=== coding standards
+=== integrated test automation approach (no separate tools)
+=== Refactoring
+=== Quality mindset & ownership
+=== Automated acceptance testing (Specification by design)
+=== Productionlike Environments
+
+
+
+===
+
+
+== Borderless transactions and the impact on test automation or why we started Selendroid
 
 The web has seen a dramatic change over the past few years with mobile becoming a big part of the overall experience.
 Test automation is a key enabler for agile software development and subsequently for continuous integration and delivery.
@@ -34,10 +66,10 @@ Due to the great success and experience with using Selenium for web automation, 
 * hybrid app support
 * no jailbreaking of device required
 
-== What is Selenium?
+== Background: What is Selenium?
 In case you are not familiar with Selenium, here's a very brief introduction to it.
 Selenium originally is a tool to automate web browsers. The link:https://code.google.com/p/selenium/wiki/JsonWireProtocol[JSON Wire Protocol] describes user interactions with a browser.
-Each browser has a specific driver which is a native implementation for that specific browser. Selenium is a classic client / server architecture.
+Each browser has a specific driver which is a native implementation for that specific browser. Selenium is a classic client/server architecture.
 The client side is decoupled from the driver (server). From a client perspective, the commands to interact with the browser are the same, regardless which browser is used.
 
 .High-level Selenium architecture
@@ -45,54 +77,20 @@ image:./images/seleniumClientServer.png[
 "My screenshot",width=480,
 link="./images/seleniumClientServer.png"]
 
-.Selenium supports the following programming languages (client bindings):
-
-* Java
-* C#
-* Python
-* Ruby
-* Perl
-* PHP
-* JavaScript
-
-=== Selenium Grid
-
-End-To-End tests are very expensive in terms of execution time and computing resources. Besides starting a browser, the whole flow of a user needs to be tested (i.e. sign in, search for something, buy it, pay).
-This can take 2-3 minutes - even in an automated fashion. Considering that larger web applications may require hundreds, if not thousands of End-To-End Tests, the execution time of the test suite
-can easily reach hours or days - if the tests are executed sequentially. Parallel execution allows to fit more tests into the same timeslot and thereby drastically reducing execution time of the entire test suite.
-Selenium Grid allows to run tests in parallel
-
-.Visualization of parallel test execution:
-
-image:./images/grid2.png[width=480,
-link="./images/grid2.png"]
-
-.Selenium Grid has two main tasks:
-* act as a load balancer for incoming requests from the client(s) and distribute the tests to the registered nodes
-* act as a resource manager to match incoming capability requests with the available capabilities in the Grid (a capability could be a platform, version, browser etc.)
-
-
-.Example architecture for a Selenium Grid:
-
-image:./images/grid.png[
-width=480,link="./images/grid.png"]
-
-The nodes (on the right side) send a registration request to the Selenium Grid Hub, telling it their capability. This typically consists of OS, browser, browser version.
-The client (left side) sends all tests along with so called Desired Capabilities to the Selenium Grid Hub as a central entry point. The Selenium Grid Hub now tries to match the desired capabilities
-to the actually available capabilities. If there is a match, it forwards the test to the node that matches the capabilities. In addition, it has the ability to run tests in parallel by distributing them to all matched nodes.
+Selenium supports the many different programming languages (client bindings) like Java, Python, Ruby and JavaScript.
 
 .What is different about mobile automation?
-.While there are of course differences between web and mobile automation, the core job ob a mobile automation tool is the same as for the web:
+While there are of course differences between web and mobile automation, the core job ob a mobile automation tool is the same as for the web:
+
 * find an element (i.e. button)
 * interact with the element (i.e. click the button)
 
 Therefore the JSON Wire protocol which was initially created for the web, also applies to the mobile space (except special gestures i.e. swipe).
 
-Now after setting the stage, let's focus on introducing you to Selendroid. The project fulfills the above mentioned requirements and is used in companies like eBay, Salesforce, Salesforce, Saucelabs and Red Hat for their Android automation.
+== Selendroid
 
-== Selendroid Features
+Now after setting the stage, let's focus on introducing you to Selendroid. The project fulfills the above mentioned requirements and is used by many companies.
 Main features of selendroid are:
-
 
 * Full compatibility with the link:https://code.google.com/p/selenium/wiki/JsonWireProtocol[JSON Wire Protocol].
 * No modification of app under test required in order to automate it
@@ -107,7 +105,7 @@ Main features of selendroid are:
 * Multiple Android target API support (10 to 19)
 * Built in link:http://selendroid.io/inspector.html[Inspector] to simplify test case development.
 
-== In Action
+=== In Action
 
 Before selendroid can be used, the system requirements must be met. There is a detailed page with instructions about link:http://selendroid.io/setup.html[how to get started].
 
@@ -139,7 +137,7 @@ To import selendroid and JUnit the following dependencies declaration is used:
 
 The app under test is located in the folder link:https://github.com/selendroid/demoproject-selendroid/tree/master/src/main/resources[src/main/resources/].
 
-=== Starting selendroid-standalone
+==== Starting selendroid-standalone
 
 Before the client driver can be instantiated the selendroid-standalone component must be started. 
 
@@ -156,7 +154,7 @@ Another option is to start the selendroid-standalone component directly from the
 	selendroidServer = new SelendroidLauncher(config);
 	selendroidServer.launchSelendroid();
 
-You can check that the application(s) and the devices are recognized by opening a browser and navigating to: link:http://localhost:4444/wd/hub/status.
+You can check that the application(s) and the devices are recognized by opening a browser and navigating to: link:http://localhost:4444/wd/hub/status[http://localhost:4444/wd/hub/status].
 
 You should see a result similar to this:
 [source,javascript]
@@ -183,7 +181,7 @@ You should see a result similar to this:
 	  }]
 	}
 
-=== The first Test
+==== The first Test
 
 Tests are written using the Selenium 2 client API. For Java we provide selendroid-client libraries that are used in the following example:
 
@@ -202,7 +200,7 @@ After the found device has been initialized, a customized selendroid-server will
 
 After the test session has been successfully initialized, the test commands such as 'find an element' and 'element interactions' are routed to this device. If the test session has ended, the emulator will stop automatically.
 
-=== Switching Context
+==== Switching Context
 
 As described above, selendroid can automate native and hybrid apps and the mobile web.
 When a selendroid test session is started, by default the native mode is activated. 
@@ -220,7 +218,7 @@ selendroidDriver.context(contextHandleName);
 
 When a context switch is done, all WebDriver commands are redirected to the corresponding context. 
 
-=== Interacting with Elements
+==== Interacting with Elements
 
 Before interacting with elements first the elements need to be found. Multiple Element locator strategies are supported, for details please have a look at selendroid's documentation.
 
@@ -240,11 +238,7 @@ This is the list of supported element interactions:
 
 The biggest advantage of using selendroid is the smooth switch between native and web contexts. 
 
-=== Selenium Grid Support
-
-Selendroid can be integrated into the selenium grid as a normal node. There are multiple steps required which are in detail described in the link:http://selendroid.io/scale.html[documentation]
-
-== Selendroid Inspector
+=== Selendroid Inspector
 
 Selendroid comes with a useful little tool called Selendroid Inspector. It’s a little web app which is embedded inside your selendroid test server. Its purpose is to let you inspect the current state of your app’s UI.
 
@@ -260,7 +254,8 @@ The main features are:
 .Selendroid's Inspector
 image:images/selendroidInspector.gif[width=480,caption="Selendroid's Inspector"]
 
-== Selendroid's Architecture
+
+=== Selendroid's Architecture
 
 Selendroid is based on the Android instrumentation framework, and therefore only testing one app is supported. Selendroid contains four major components:
 
@@ -274,16 +269,45 @@ Below you can see an overview about the architecture:
 .Selendroid's Architecture
 image:images/selendroid_archicture.png[width=480,caption="Selendroid's Architecture"]
 
-=== Selendroid-Standalone
+==== Selendroid-Standalone
 
 This components acts as a proxy between the selendroid-client and the selendroid-server and starts e.g. an Android emulator, creates for the app under test a customized selendroid-server and installs everything on the device. After the session is initialized on the device, subsequent requests are directly forwarded to the server on the device and the response routed back to the client.
 
 
-=== Selendroid-Server
+==== Selendroid-Server
 
 This server component runs on the device and is implementing the JSON Wire protocol for Android native and hybrid contexts. The base framework to interact with the app under test is the link:http://developer.android.com/tools/testing/testing_android.html[Android Instrumentation framework].
 
 Internally the web view related driver class is SelendroidWebDriver and native class is SelendroidNativeDriver. SelendroidWebDriver is using Automation Atoms of the selenium project to interact with the elements in the web view. 
+
+== Selenium Grid
+
+End-To-End tests are very expensive in terms of execution time and computing resources. Besides starting a browser, the whole flow of a user needs to be tested (i.e. sign in, search for something, buy it, pay).
+This can take 2-3 minutes - even in an automated fashion. Considering that larger web applications may require hundreds, if not thousands of End-To-End Tests, the execution time of the test suite
+can easily reach hours or days - if the tests are executed sequentially. Parallel execution allows to fit more tests into the same timeslot and thereby drastically reducing execution time of the entire test suite.
+Selenium Grid allows to run tests in parallel
+
+.Visualization of parallel test execution:
+
+image:./images/grid2.png[width=480,
+link="./images/grid2.png"]
+
+.Selenium Grid has two main tasks:
+* act as a load balancer for incoming requests from the client(s) and distribute the tests to the registered nodes
+* act as a resource manager to match incoming capability requests with the available capabilities in the Grid (a capability could be a platform, version, browser etc.)
+
+
+.Example architecture for a Selenium Grid:
+
+image:./images/grid.png[
+width=480,link="./images/grid.png"]
+
+The nodes (on the right side) send a registration request to the Selenium Grid Hub, telling it their capability. This typically consists of OS, browser, browser version.
+The client (left side) sends all tests along with so called Desired Capabilities to the Selenium Grid Hub as a central entry point. The Selenium Grid Hub now tries to match the desired capabilities
+to the actually available capabilities. If there is a match, it forwards the test to the node that matches the capabilities. In addition, it has the ability to run tests in parallel by distributing them to all matched nodes.
+
+To use selendroid in a grid, there are multiple steps required which are in detail described in the link:http://selendroid.io/scale.html[documentation]
+
 
 == State of the project
 
@@ -292,7 +316,8 @@ Selendroid open source project is in active development and got already multiple
 == Authors
 
 === Biography Dominik Dary
-While working as Staff Software Engineer in Test at ebay international, link:https://github.com/DominikDary/[Dominik Dary] created link:http://selendroid.io[selendroid]. Currently he is working as Technical Lead Quality in one of Adobe's cloud platforms. He   continues to contribute and lead the project selendroid during his spare time. Dominik is a recognized expert in test engineering and test automation and has spoken at many conferences around the world.
+While working as Software Engineer in Test at ebay, link:https://github.com/DominikDary/[Dominik Dary] created link:http://selendroid.io[selendroid]. Currently he is working as Technical Lead Quality in one of Adobe's cloud platforms. He   continues to contribute and lead the project selendroid during his spare time. 
+Dominik has 10 years of practical experience in professional software development and in quality engineering and has spoken at many conferences around the world.
 
 === Biography Michael Palotas
 In addition to his role as Head of Productivity & Test Engineering at eBay International, Michael Palotas is founder of Gridfusion Software Solutions, a consultancy that focuses on test automation with open source toolsets and agile testing practices. Michael was a key driver behind the creation of Selenium Grid and more recently the creation of Selendroid and ios-driver. After working in various lead roles in software development and test for Ericsson, Nortel Networks and Intel in North America and Europe, Michael joined eBay in 2004 and founded Gridfusion in 2011. Michael is a recognized expert in test engineering and test automation and has spoken at many conferences and events around the world.
